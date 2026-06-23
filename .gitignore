@@ -43,3 +43,8 @@ next-env.d.ts
 # docs de travail internes (stratégie privée — non publiés sur le repo public)
 brief-simulateur-crypto-sinvestir.md
 sinvestir-design.jpeg
+
+.vercel
+
+# Playwright MCP artifacts
+.playwright-mcp/
