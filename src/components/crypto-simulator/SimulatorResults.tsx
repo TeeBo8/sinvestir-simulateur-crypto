@@ -23,21 +23,33 @@ export function SimulatorResults({ result, symbol }: SimulatorResultsProps) {
       {/* Carte principale : plus/moins-value */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <CardTitle
+            className={cn(
+              "flex items-center gap-2 text-sm font-medium",
+              gain ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
+            )}
+          >
             <TrendIcon className="size-4" />
             Plus/moins-value
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="text-3xl font-bold tracking-tight tabular-nums">
+            <span
+              className={cn(
+                "text-3xl font-bold tracking-tight tabular-nums",
+                gain ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
+              )}
+            >
               {gain ? "+" : ""}
               {formatEUR(result.profit)}
             </span>
             <span
               className={cn(
-                "rounded-md px-2 py-0.5 text-sm font-semibold tabular-nums",
-                "bg-muted text-foreground",
+                "rounded-md px-2 py-0.5 text-sm font-semibold tabular-nums ring-1",
+                gain
+                  ? "bg-emerald-500/10 text-emerald-600 ring-emerald-500/20 dark:text-emerald-400"
+                  : "bg-red-500/10 text-red-600 ring-red-500/20 dark:text-red-400",
               )}
             >
               {formatPct(result.profitPct)}
