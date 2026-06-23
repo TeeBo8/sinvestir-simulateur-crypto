@@ -70,23 +70,33 @@ async function fetchLivePrices(coingeckoId: string): Promise<PricePoint[] | null
   }
 }
 
+/** Série de prix + métadonnée de provenance (pour le diagnostic / les toasts). */
+export interface HistoryResult {
+  points: PricePoint[];
+  /** `true` si le refresh live CoinGecko a été appliqué, `false` si fallback seul. */
+  live: boolean;
+}
+
 /**
  * Série de prix d'une crypto, snapshot rafraîchi par le live quand disponible.
  *
  * @returns Points journaliers EUR triés par date croissante (jamais vide pour
- *          un `id` valide, grâce au fallback bundlé).
+ *          un `id` valide, grâce au fallback bundlé) + provenance.
  */
-export async function getHistory(id: CryptoId): Promise<PricePoint[]> {
+export async function getHistory(id: CryptoId): Promise<HistoryResult> {
   const snapshot = getSnapshot(id);
   const live = await fetchLivePrices(CRYPTO_BY_ID[id].coingeckoId);
-  if (!live || live.length === 0) return snapshot.points;
+  if (!live || live.length === 0) {
+    return { points: snapshot.points, live: false };
+  }
 
   // Superpose les prix live (récents) par-dessus la base bundlée.
   const byDate = new Map(snapshot.points.map((p) => [p.date, p.price]));
   for (const p of live) byDate.set(p.date, p.price);
-  return [...byDate.entries()]
+  const points = [...byDate.entries()]
     .map(([date, price]) => ({ date, price }))
     .sort((a, b) => (a.date < b.date ? -1 : 1));
+  return { points, live: true };
 }
 
 /** Indique si la stratégie live est configurée (clé présente). Pour le diagnostic. */
